@@ -1,6 +1,7 @@
 {
   "name": "yt2mp3",
   "productName": "Youtube2mp3",
+  "version": "1.0.0",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Fast Refresh for rapid application development",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
@@ -9,6 +10,7 @@
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir src",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
     "package": "rm -rf src/dist && yarn build && electron-builder build --publish never",
+    "publish": "rm -rf src/dist && yarn build && electron-builder build --publish always",
     "postinstall": "node -r @babel/register .erb/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall && yarn-deduplicate yarn.lock",
     "start": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && cross-env yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.ts",
@@ -86,35 +88,18 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "yt2mp3",
-      "repo": "yt2mp3"
+      "token":"178ef7e352fd0b63e445b567274568f80f6dce88"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yt2mp3/yt2mp3.git"
+    "url": "git+https://github.com/yunay/yt2mp3"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://yt2mp3.js.org"
+    "name": "Yunay Hamza",
+    "email": "yunay.yuksel@gmail.com"
   },
-  "contributors": [
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    },
-    {
-      "name": "John Tran",
-      "email": "jptran318@gmail.com",
-      "url": "https://github.com/jooohhn"
-    }
-  ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/yt2mp3/yt2mp3/issues"
-  },
   "keywords": [
     "electron",
     "boilerplate",
@@ -126,7 +111,7 @@
     "hot",
     "reload"
   ],
-  "homepage": "https://github.com/yt2mp3/yt2mp3#readme",
+  "homepage": "https://github.com/yunay/yt2mp3#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
@@ -273,9 +258,6 @@
     "node": ">=10.x",
     "npm": ">=6.x",
     "yarn": ">=1.21.3"
-  },
-  "collective": {
-    "url": "https://opencollective.com/yt2mp3-594"
   },
   "browserslist": [],
   "prettier": {
