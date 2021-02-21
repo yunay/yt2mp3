@@ -69,7 +69,7 @@ const createWindow = async () => {
 
   autoUpdater.checkForUpdatesAndNotify();
 
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.removeMenu();
 
@@ -126,11 +126,10 @@ ipcMain.on('app_version', (event) => {
   event.sender.send('app_version', { version: app.getVersion() });
 });
 
-autoUpdater.on('update_available', () => {
+autoUpdater.on('update-available', () => {
   mainWindow.webContents.send('update_available');
 });
-
-autoUpdater.on('update_downloaded', () => {
+autoUpdater.on('update-downloaded', () => {
   mainWindow.webContents.send('update_downloaded');
 });
 
