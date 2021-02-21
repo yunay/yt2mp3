@@ -2,8 +2,8 @@ import React from 'react';
 import { YoutubeResult } from '../models/YoutubeResult';
 import { remote } from 'electron';
 import ytdl from 'ytdl-core';
-import ffmpeg from 'fluent-ffmpeg';
-import jquery from 'jquery'
+import ffmpeg, { ffprobe } from 'fluent-ffmpeg';
+import jquery from 'jquery';
 import Helpers from '../common/Helpers';
 
 interface ResultProps {
@@ -25,19 +25,71 @@ const Result: React.FC<ResultProps> = ({ youtubeResult }) => {
 
           ffmpeg(stream)
             .on('start', () => {
-              jquery("#loading-screen").fadeIn();
+              jquery('#loading-screen').fadeIn();
             })
             .on('end', () => {
-              jquery("#loading-screen").fadeOut();
-              Helpers.notify(`🥳 Свалянето на ${youtubeResult.snippet.title}.mp3 приключи успешно.`, "success");
+              jquery('#loading-screen').fadeOut();
+              Helpers.notify(
+                `🥳 Свалянето на ${youtubeResult.snippet.title}.mp3 приключи успешно.`,
+                'success'
+              );
             })
             .on('error', (err) => {
-              jquery("#loading-screen").fadeOut();
-              Helpers.notify(`😕 Възникна грешка при свалянето на ${youtubeResult.snippet.title}.mp3`, "error");
-              console.error(err)
+              jquery('#loading-screen').fadeOut();
+              Helpers.notify(
+                `😕 Възникна грешка при свалянето на ${youtubeResult.snippet.title}.mp3`,
+                'error'
+              );
+              console.error(err);
             })
             .save(
-              `${result.filePaths[0]}\\${Helpers.text.escapeInvalidSymbolsInFilename(youtubeResult.snippet.title)}.mp3`
+              `${
+                result.filePaths[0]
+              }\\${Helpers.text.escapeInvalidSymbolsInFilename(
+                youtubeResult.snippet.title
+              )}.mp3`
+            );
+        }
+      });
+  };
+
+  const downloadMp4 = () => {
+    remote.dialog
+      .showOpenDialog({
+        properties: ['openDirectory'],
+        filters: [{ name: 'Music', extensions: ['mp4'] }],
+      })
+      .then((result) => {
+        if (result.filePaths && result.filePaths.length > 0) {
+          let stream = ytdl(youtubeResult.id.videoId, {
+            quality: 18,
+          });
+
+          ffmpeg(stream)
+            .on('start', () => {
+              jquery('#loading-screen').fadeIn();
+            })
+            .on('end', () => {
+              jquery('#loading-screen').fadeOut();
+              Helpers.notify(
+                `🥳 Свалянето на ${youtubeResult.snippet.title}.mp4 приключи успешно.`,
+                'success'
+              );
+            })
+            .on('error', (err) => {
+              jquery('#loading-screen').fadeOut();
+              Helpers.notify(
+                `😕 Възникна грешка при свалянето на ${youtubeResult.snippet.title}.mp4`,
+                'error'
+              );
+              console.error(err);
+            })
+            .save(
+              `${
+                result.filePaths[0]
+              }\\${Helpers.text.escapeInvalidSymbolsInFilename(
+                youtubeResult.snippet.title
+              )}.mp4`
             );
         }
       });
@@ -57,7 +109,9 @@ const Result: React.FC<ResultProps> = ({ youtubeResult }) => {
           <li className="nav-item w-50" onClick={downloadMp3}>
             🎵 mp3
           </li>
-          <li className="nav-item w-50">🎬 mp4</li>
+          <li className="nav-item w-50" onClick={downloadMp4}>
+            🎬 mp4
+          </li>
         </ul>
       </div>
     </div>

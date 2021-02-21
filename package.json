@@ -86,9 +86,9 @@
     "extraResources": [
       "./assets/**"
     ],
-    "publish": {
-      "provider": "github",
-      "token":"f608f312460f1bd42c25631735f57967cc9e0cc9"
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false
     }
   },
   "repository": {

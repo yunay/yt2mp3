@@ -4,7 +4,6 @@
  */
 
 @import 'react-toastify/dist/ReactToastify.css';
-
 body {
   background-color: rgb(245, 243, 243)
 }
@@ -87,7 +86,7 @@ ul.result-buttons>li:hover {
   display: none;
 }
 
-#loading-screen>div{
+#loading-screen>div {
   position: relative;
   margin: 20% auto;
   display: block;
@@ -95,6 +94,6 @@ ul.result-buttons>li:hover {
   height: 100px;
 }
 
-.Toastify__toast-container{
+.Toastify__toast-container {
   width: 1000px !important;
 }

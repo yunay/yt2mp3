@@ -1,46 +1,116 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Youtube2Mp3</title>
-    <script>
-      (() => {
-        if (process?.env?.NODE_ENV !== 'development') {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = './dist/style.css';
-          // HACK: Writing the script path should be done with webpack
-          document.getElementsByTagName('head')[0].appendChild(link);
-        }
-      })();
-    </script>
-    <!-- CSS only -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script>
-      const scripts = [];
 
-      if (process.env.NODE_ENV === 'development') {
-        // Dynamically insert the DLL script in development env in the
-        // renderer process
-        scripts.push('../.erb/dll/renderer.dev.dll.js');
+<head>
+  <meta charset="utf-8" />
+  <title>Youtube2Mp3</title>
+  <style>
+    #notification {
+      position: fixed;
+      bottom: 50%;
+      left: 35%;
+      width: 400px;
+      padding: 20px;
+      color: #4e73df;
+      border-radius: 5px;
+      background-color: white;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
 
-        // Dynamically insert the bundled app script in the renderer process
-        const port = process.env.PORT || 1212;
-        scripts.push(`http://localhost:${port}/dist/renderer.dev.js`);
-      } else {
-        scripts.push('./dist/renderer.prod.js');
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script>
+    (() => {
+      if (process?.env?.NODE_ENV !== 'development') {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = './dist/style.css';
+        // HACK: Writing the script path should be done with webpack
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+    })();
+  </script>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+</head>
+
+<body>
+  <div id="root"></div>
+  <div id="notification" class="hidden">
+    <p id="message"></p>
+    <button id="restart-button" class="btn btn-primary hidden" onClick="restartApp()">
+      Рестартирай
+    </button>
+  </div>
+  <script>
+    const scripts = [];
+
+    if (process.env.NODE_ENV === 'development') {
+      // Dynamically insert the DLL script in development env in the
+      // renderer process
+      scripts.push('../.erb/dll/renderer.dev.dll.js');
+
+      // Dynamically insert the bundled app script in the renderer process
+      const port = process.env.PORT || 1212;
+      scripts.push(`http://localhost:${port}/dist/renderer.dev.js`);
+    } else {
+      scripts.push('./dist/renderer.prod.js');
+    }
+
+    if (scripts.length) {
+      document.write(
+        scripts
+          .map((script) => `<script defer src="${script}"><\/script>`)
+          .join('')
+      );
+    }
+  </script>
+  <script type="text/javascript">
+    window.exports = module.exports
+  </script>
+  <script type="text/tsx">
+      import * as React from 'react';
+      import * as ReactDOM from 'react-dom';
+      import { AppContainer } from 'react-hot-loader';
+      import { HashRouter } from 'react-router-dom';
+
+      const { ipcRenderer } = require('electron');
+
+      let render = () => {
+      const { App } = require('./app');
+
+      ReactDOM.render(
+      <AppContainer><HashRouter basename={'/'}><App /></HashRouter></AppContainer>, document.getElementById('wrapper'));
       }
 
-      if (scripts.length) {
-        document.write(
-          scripts
-            .map((script) => `<script defer src="${script}"><\/script>`)
-            .join('')
-        );
+      ipcRenderer.send('app_version');
+      ipcRenderer.on('app_version', (event, arg) => {
+      ipcRenderer.removeAllListeners('app_version');
+      });
+
+      ipcRenderer.on('update_available', () => {
+      ipcRenderer.removeAllListeners('update_available');
+      document.getElementById('message').innerText = 'Има нова версия на програмата. Изтегля се...';
+      document.getElementById('notification').classList.remove('hidden');
+      });
+      ipcRenderer.on('update_downloaded', () => {
+      ipcRenderer.removeAllListeners('update_downloaded');
+      document.getElementById('message').innerText = 'Рестартирай за да обновиш програмата.';
+      document.getElementById('restart-button').classList.remove('hidden');
+      document.getElementById('notification').classList.remove('hidden');
+      });
+
+      function restartApp() {
+      ipcRenderer.send('restart_app');
       }
-    </script>
-  </body>
+
+      render();
+      if (module.hot) { module.hot.accept(render); }
+
+  </script>
+</body>
+
 </html>

@@ -1,12 +1,12 @@
 {
   "name": "yt2mp3",
   "productName": "yt2mp3",
-  "version": "1.0.2",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "version": "1.0.4",
+  "description": "Youtube content to mp3 and mp4 formats",
   "main": "./main.prod.js",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
+    "name": "Yunay Hamza",
+    "email": "yunay.yuksel@gmail.com",
     "url": "https://github.com/yunay/yt2mp3"
   },
   "scripts": {
