@@ -10,7 +10,7 @@ body {
 }
 
 .row>* {
-  padding: 0;
+  padding: 0 !important;
 }
 
 input, button {
@@ -51,7 +51,7 @@ ul#main-menu>li:hover {
 
 .result {
   margin: 7px;
-  width: 420px;
+  width: 420px !important;
   height: 270px;
 }
 

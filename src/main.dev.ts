@@ -76,9 +76,6 @@ const createWindow = async () => {
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
-
   mainWindow.removeMenu();
 
   // @TODO: Use 'ready-to-show' event

@@ -33,7 +33,7 @@
   },
   "build": {
     "productName": "Youtube2mp3",
-    "appId": "org.erb.Youtube2mp3",
+    "appId": "com.cim.youtube2mp3",
     "files": [
       "dist/",
       "node_modules/",
@@ -88,12 +88,12 @@
     ],
     "publish": {
       "provider": "github",
-      "token":"178ef7e352fd0b63e445b567274568f80f6dce88"
+      "token":"f608f312460f1bd42c25631735f57967cc9e0cc9"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yunay/yt2mp3"
+    "url": "https://github.com/yunay/yt2mp3.git"
   },
   "author": {
     "name": "Yunay Hamza",
