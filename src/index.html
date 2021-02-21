@@ -41,7 +41,10 @@
   <div id="root"></div>
   <div id="notification" class="hidden">
     <p id="message"></p>
-    <button id="restart-button" class="btn btn-primary hidden" onClick="restartApp()">
+    <button id="close-button" onClick="closeNotification()">
+      Затвори
+    </button>
+    <button id="restart-button" onClick="restartApp()" class="hidden">
       Рестартирай
     </button>
   </div>
@@ -67,49 +70,39 @@
           .join('')
       );
     }
-  </script>
-  <script type="text/javascript">
-    window.exports = module.exports
-  </script>
-  <script type="text/tsx">
-      import * as React from 'react';
-      import * as ReactDOM from 'react-dom';
-      import { AppContainer } from 'react-hot-loader';
-      import { HashRouter } from 'react-router-dom';
 
-      const { ipcRenderer } = require('electron');
+    const { ipcRenderer } = require('electron');
+    const version = document.getElementById('version');
 
-      let render = () => {
-      const { App } = require('./app');
-
-      ReactDOM.render(
-      <AppContainer><HashRouter basename={'/'}><App /></HashRouter></AppContainer>, document.getElementById('wrapper'));
-      }
-
-      ipcRenderer.send('app_version');
-      ipcRenderer.on('app_version', (event, arg) => {
+    ipcRenderer.send('app_version');
+    ipcRenderer.on('app_version', (event, arg) => {
       ipcRenderer.removeAllListeners('app_version');
-      });
 
-      ipcRenderer.on('update_available', () => {
+      document.title = 'Youtube2Mp3 ' + arg.version;
+    });
+
+    const notification = document.getElementById('notification');
+    const message = document.getElementById('message');
+    const restartButton = document.getElementById('restart-button');
+
+    ipcRenderer.on('update_available', () => {
       ipcRenderer.removeAllListeners('update_available');
-      document.getElementById('message').innerText = 'Има нова версия на програмата. Изтегля се...';
-      document.getElementById('notification').classList.remove('hidden');
-      });
-      ipcRenderer.on('update_downloaded', () => {
+      message.innerText = 'Има нова версия. Изтегля се...';
+      notification.classList.remove('hidden');
+    });
+    ipcRenderer.on('update_downloaded', () => {
       ipcRenderer.removeAllListeners('update_downloaded');
-      document.getElementById('message').innerText = 'Рестартирай за да обновиш програмата.';
-      document.getElementById('restart-button').classList.remove('hidden');
-      document.getElementById('notification').classList.remove('hidden');
-      });
+      message.innerText = 'Новата версия е изтеглена. Ще бъде инсталирана след рестарт. Рестартирай сега?';
+      restartButton.classList.remove('hidden');
+      notification.classList.remove('hidden');
+    });
 
-      function restartApp() {
+    function closeNotification() {
+      notification.classList.add('hidden');
+    }
+    function restartApp() {
       ipcRenderer.send('restart_app');
-      }
-
-      render();
-      if (module.hot) { module.hot.accept(render); }
-
+    }
   </script>
 </body>
 

@@ -67,6 +67,10 @@ const createWindow = async () => {
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
+  autoUpdater.checkForUpdatesAndNotify();
+
+  mainWindow.webContents.openDevTools();
+
   mainWindow.removeMenu();
 
   // @TODO: Use 'ready-to-show' event
@@ -92,6 +96,10 @@ const createWindow = async () => {
     event.preventDefault();
     shell.openExternal(url);
   });
+
+  mainWindow.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify();
+  });
 };
 
 /**
@@ -114,15 +122,15 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
-ipcMain.on('app_version', (event: any) => {
+ipcMain.on('app_version', (event) => {
   event.sender.send('app_version', { version: app.getVersion() });
 });
 
-autoUpdater.on('update-available', () => {
+autoUpdater.on('update_available', () => {
   mainWindow.webContents.send('update_available');
 });
 
-autoUpdater.on('update-downloaded', () => {
+autoUpdater.on('update_downloaded', () => {
   mainWindow.webContents.send('update_downloaded');
 });
 
