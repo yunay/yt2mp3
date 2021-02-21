@@ -67,6 +67,8 @@ const createWindow = async () => {
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
+  autoUpdater.checkForUpdatesAndNotify();
+
   //mainWindow.webContents.openDevTools();
 
   mainWindow.removeMenu();
@@ -93,10 +95,6 @@ const createWindow = async () => {
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
     shell.openExternal(url);
-  });
-
-  mainWindow.once('ready-to-show', () => {
-    autoUpdater.checkForUpdatesAndNotify();
   });
 };
 
