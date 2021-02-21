@@ -1,7 +1,7 @@
 {
   "name": "yt2mp3",
   "productName": "yt2mp3",
-  "version": "1.0.3",
+  "version": "1.0.10",
   "description": "Youtube content to mp3 and mp4 formats",
   "main": "./main.prod.js",
   "author": {
