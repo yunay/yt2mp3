@@ -69,7 +69,7 @@ const createWindow = async () => {
 
   autoUpdater.checkForUpdatesAndNotify();
 
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   mainWindow.removeMenu();
 
