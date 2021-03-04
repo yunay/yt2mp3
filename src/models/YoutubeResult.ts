@@ -1,6 +1,3 @@
-export class ContentDetails {
-  public duration: string;
-}
 
 export class YoutubeId {
   public videoId: string;
@@ -25,8 +22,6 @@ export class Thumbnail {
 export class YoutubeSnippet {
 
   public title: string;
-
-  public description: string;
 
   public thumbnails: Thumbnail
 }

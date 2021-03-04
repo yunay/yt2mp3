@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-interface SearchProps {
+interface SearchPanelProps {
   onSearchCallback: (keyword: string) => void;
 }
 
-const Search: React.FC<SearchProps> = ({ onSearchCallback }) => {
+const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchCallback }) => {
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearchValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,4 +38,4 @@ const Search: React.FC<SearchProps> = ({ onSearchCallback }) => {
   );
 };
 
-export default Search;
+export default SearchPanel;

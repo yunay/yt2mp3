@@ -1,31 +1,22 @@
-import React, { useState } from 'react';
-import { ToastContainer } from 'react-toastify'
-import Results from './components/Results';
-import Search from './components/Search';
-import { YoutubeResult } from './models/YoutubeResult';
-import { YoutubeService } from './services/YoutubeService';
+import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import Menu from './components/Menu';
+import Home from './components/pages/Home';
+import Search from './components/pages/Search';
+import History from './components/pages/History';
+import Settings from './components/pages/Settings';
 
 const Layout = () => {
-  const [results, loadResults] = useState<YoutubeResult[]>();
-  const youtubeService = new YoutubeService();
-
-  const onSearchCallback = (keyword: string) => {
-    youtubeService.getVideos(keyword).then((results) => {
-      loadResults(results);
-    });
-  };
-
   return (
-    <>
-      <ToastContainer />
+    <Router>
+      <Menu />
       <div id="main-container">
-        <Search onSearchCallback={onSearchCallback} />
-        <Results results={results} />
+        <Route exact path="/"><Home /></Route>
+        <Route exact path="/search"><Search /></Route>
+        <Route exact path="/history"><History /></Route>
+        <Route exact path="/settings"><Settings /></Route>
       </div>
-      <div id="loading-screen">
-        <div className="spinner-border text-primary" role="status"></div>
-      </div>
-    </>
+    </Router>
   );
 };
 

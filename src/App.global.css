@@ -97,3 +97,7 @@ ul.result-buttons>li:hover {
 .Toastify__toast-container {
   width: 1000px !important;
 }
+
+#main-menu>a{
+  float: right;
+}

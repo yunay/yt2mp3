@@ -28,7 +28,7 @@ const Results: React.FC<ResultsProps> = (props) => {
     <div id="results" style={{ height: windowHeight / 1.32 }}>
       <div className="row">
         {props.results &&
-          props.results.map((result) => <Result  youtubeResult={result}/>)}
+          props.results.map((result) => <Result key={result.id.videoId}  youtubeResult={result}/>)}
       </div>
     </div>
   );

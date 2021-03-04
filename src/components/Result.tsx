@@ -2,9 +2,12 @@ import React from 'react';
 import { YoutubeResult } from '../models/YoutubeResult';
 import { remote } from 'electron';
 import ytdl from 'ytdl-core';
-import ffmpeg, { ffprobe } from 'fluent-ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
 import jquery from 'jquery';
 import Helpers from '../common/Helpers';
+import {DbContext} from '../data/database'
+import { MediaType } from '../models/Enums';
+import { History } from '../models/History';
 
 interface ResultProps {
   youtubeResult: YoutubeResult;
@@ -23,6 +26,8 @@ const Result: React.FC<ResultProps> = ({ youtubeResult }) => {
             quality: 'highestaudio',
           });
 
+          DbContext.history.add(new History(youtubeResult, MediaType.mp3, new Date())).then(t=>t.data)
+
           ffmpeg(stream)
             .on('start', () => {
               jquery('#loading-screen').fadeIn();
@@ -33,6 +38,8 @@ const Result: React.FC<ResultProps> = ({ youtubeResult }) => {
                 `🥳 Свалянето на ${youtubeResult.snippet.title}.mp3 приключи успешно.`,
                 'success'
               );
+
+
             })
             .on('error', (err) => {
               jquery('#loading-screen').fadeOut();
