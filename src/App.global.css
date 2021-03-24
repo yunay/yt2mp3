@@ -21,8 +21,16 @@ button:focus, button:active, input:focus, input:active {
   box-shadow: none;
 }
 
+.btn-check:focus+.btn, .btn:focus, .form-control:focus, .form-select:focus {
+  box-shadow: none !important;
+}
+
+.form-select {
+  border-radius: none !important;
+}
+
 #search {
-  width: 800px;
+  width: 1000px;
   margin: 0 auto;
 }
 
@@ -98,6 +106,29 @@ ul.result-buttons>li:hover {
   width: 1000px !important;
 }
 
-#main-menu>a{
+#main-menu>a {
   float: right;
+}
+
+.menu-nav-item {
+  opacity: 0.3;
+}
+
+.active-nav-link {
+  opacity: 1 !important;
+}
+
+#search-type {
+  width: 300px;
+}
+
+.existing {
+  position: absolute;
+  right: 0;
+  padding: 0px 2px;
+  opacity: 0.9;
+}
+
+.no-styled-btn{
+  cursor: pointer;
 }

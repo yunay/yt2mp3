@@ -1,109 +1,31 @@
 import React from 'react';
 import { YoutubeResult } from '../models/YoutubeResult';
-import { remote } from 'electron';
-import ytdl from 'ytdl-core';
-import ffmpeg from 'fluent-ffmpeg';
-import jquery from 'jquery';
-import Helpers from '../common/Helpers';
-import {DbContext} from '../data/database'
+import { AppContext, AppData } from '../AppContext';
+import { YoutubeDownloadManager } from '../common/DownloadManager';
 import { MediaType } from '../models/Enums';
-import { History } from '../models/History';
+import { observer } from 'mobx-react-lite';
 
 interface ResultProps {
   youtubeResult: YoutubeResult;
 }
 
-const Result: React.FC<ResultProps> = ({ youtubeResult }) => {
+const Result: React.FC<ResultProps> = observer(({ youtubeResult }) => {
+  const appContext = React.useContext<AppData>(AppContext);
+
   const downloadMp3 = () => {
-    remote.dialog
-      .showOpenDialog({
-        properties: ['openDirectory'],
-        filters: [{ name: 'Music', extensions: ['mp3'] }],
-      })
-      .then((result) => {
-        if (result.filePaths && result.filePaths.length > 0) {
-          let stream = ytdl(youtubeResult.id.videoId, {
-            quality: 'highestaudio',
-          });
-
-          DbContext.history.add(new History(youtubeResult, MediaType.mp3, new Date())).then(t=>t.data)
-
-          ffmpeg(stream)
-            .on('start', () => {
-              jquery('#loading-screen').fadeIn();
-            })
-            .on('end', () => {
-              jquery('#loading-screen').fadeOut();
-              Helpers.notify(
-                `🥳 Свалянето на ${youtubeResult.snippet.title}.mp3 приключи успешно.`,
-                'success'
-              );
-
-
-            })
-            .on('error', (err) => {
-              jquery('#loading-screen').fadeOut();
-              Helpers.notify(
-                `😕 Възникна грешка при свалянето на ${youtubeResult.snippet.title}.mp3`,
-                'error'
-              );
-              console.error(err);
-            })
-            .save(
-              `${
-                result.filePaths[0]
-              }\\${Helpers.text.escapeInvalidSymbolsInFilename(
-                youtubeResult.snippet.title
-              )}.mp3`
-            );
-        }
-      });
+    YoutubeDownloadManager.downloadMp3(youtubeResult, appContext);
   };
 
   const downloadMp4 = () => {
-    remote.dialog
-      .showOpenDialog({
-        properties: ['openDirectory'],
-        filters: [{ name: 'Music', extensions: ['mp4'] }],
-      })
-      .then((result) => {
-        if (result.filePaths && result.filePaths.length > 0) {
-          let stream = ytdl(youtubeResult.id.videoId, {
-            quality: 18,
-          });
-
-          ffmpeg(stream)
-            .on('start', () => {
-              jquery('#loading-screen').fadeIn();
-            })
-            .on('end', () => {
-              jquery('#loading-screen').fadeOut();
-              Helpers.notify(
-                `🥳 Свалянето на ${youtubeResult.snippet.title}.mp4 приключи успешно.`,
-                'success'
-              );
-            })
-            .on('error', (err) => {
-              jquery('#loading-screen').fadeOut();
-              Helpers.notify(
-                `😕 Възникна грешка при свалянето на ${youtubeResult.snippet.title}.mp4`,
-                'error'
-              );
-              console.error(err);
-            })
-            .save(
-              `${
-                result.filePaths[0]
-              }\\${Helpers.text.escapeInvalidSymbolsInFilename(
-                youtubeResult.snippet.title
-              )}.mp4`
-            );
-        }
-      });
+    YoutubeDownloadManager.downloadMp4(youtubeResult, appContext)
   };
 
   return (
     <div className="card col-3 result" key={youtubeResult.id.videoId}>
+      <div className="existing" title="Изтеглен във формат mp3">
+          {appContext.isAlreadyDownloaded(youtubeResult, MediaType.mp3) ? <span title="Изтеглен във формат mp3">🎵</span> : null}
+          {appContext.isAlreadyDownloaded(youtubeResult, MediaType.mp4)? <span title="Изтеглен във формат mp4">🎬</span> : null}
+        </div>
       <iframe
         itemType="text/html"
         width="418"
@@ -123,6 +45,6 @@ const Result: React.FC<ResultProps> = ({ youtubeResult }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Result;

@@ -1,22 +1,29 @@
-import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import React, { useState } from 'react';
 import Menu from './components/Menu';
-import Home from './components/pages/Home';
 import Search from './components/pages/Search';
 import History from './components/pages/History';
-import Settings from './components/pages/Settings';
+import { MenuItem } from './models/Enums';
 
 const Layout = () => {
+
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem>(MenuItem.search);
+  const onMenuItemSelect = (selectedMenuItem: MenuItem) => {
+    setSelectedMenuItem(selectedMenuItem);
+  };
+
   return (
-    <Router>
-      <Menu />
+    <>
+      <Menu
+        selectedMenuItem={selectedMenuItem}
+        onMenuItemSelect={onMenuItemSelect}
+      />
       <div id="main-container">
-        <Route exact path="/"><Home /></Route>
-        <Route exact path="/search"><Search /></Route>
-        <Route exact path="/history"><History /></Route>
-        <Route exact path="/settings"><Settings /></Route>
+        {selectedMenuItem == MenuItem.search ? <Search /> : null}
+        {selectedMenuItem == MenuItem.history ? (
+          <History />
+        ) : null}
       </div>
-    </Router>
+    </>
   );
 };
 

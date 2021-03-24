@@ -1,13 +1,36 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { MenuItem } from '../models/Enums';
 
-const Menu = () => {
+interface MenuProps {
+  selectedMenuItem: MenuItem;
+  onMenuItemSelect: (selectedMenuItem: MenuItem) => any;
+}
+
+const Menu: React.FC<MenuProps> = ({ selectedMenuItem, onMenuItemSelect }) => {
   return (
-    <ul className="nav nav-tabs justify-content-center">
-      <li className="nav-item"><Link className="nav-link" to="/" title="Начало">🏡</Link></li>
-      <li className="nav-item"><Link className="nav-link" to="/search" title="Търсачка">🎬</Link></li>
-      <li className="nav-item"><Link className="nav-link" to="/history" title="История">📝</Link></li>
-      <li className="nav-item"><Link className="nav-link" to="/settings" title="Настройки">⚙</Link></li>
+    <ul className="nav justify-content-end">
+      <li className="nav-item">
+        <button
+          onClick={() => onMenuItemSelect(MenuItem.search)}
+          className={`btn btn-link nav-link menu-nav-item ${
+            selectedMenuItem == MenuItem.search ? 'active-nav-link' : ''
+          }`}
+          title="Търсачка"
+        >
+          🔎
+        </button>
+      </li>
+      <li className="nav-item">
+        <button
+          onClick={() => onMenuItemSelect(MenuItem.history)}
+          className={`btn btn-link nav-link menu-nav-item ${
+            selectedMenuItem == MenuItem.history ? 'active-nav-link' : ''
+          }`}
+          title="История"
+        >
+          📝
+        </button>
+      </li>
     </ul>
   );
 };

@@ -1,6 +1,6 @@
 import { app, remote } from 'electron';
 import DataStore from 'nedb';
-import { History } from '../models/History';
+import { HistoryRecord } from '../models/HistoryRecord';
 
 const electronUserDataPath = (app || remote.app).getPath('userData');
 
@@ -27,7 +27,7 @@ export class DataResult {
 const db = {
   history: new DataStore({
     filename: `${electronUserDataPath}/yt2mp3db/history.db`,
-    autoload:true
+    autoload: true,
   }),
 };
 
@@ -35,7 +35,7 @@ db.history.loadDatabase();
 
 export const DbContext = {
   history: {
-    add: (record: History): Promise<DataResult> => {
+    add: (record: HistoryRecord): Promise<DataResult> => {
       return new Promise((resolve) => {
         db.history.insert(record, (err, doc) => {
           if (err) resolve(new DataResult(DbResponseType.withError, err));
@@ -44,5 +44,25 @@ export const DbContext = {
       });
     },
     get: (query?: any) => query ? db.history.find(query) : db.history.find({}),
+    remove: (query: any): Promise<DataResult> => {
+      return new Promise((resolve) => {
+        if (query) {
+          db.history.remove(query, {}, (err, doc) => {
+            if (err) resolve(new DataResult(DbResponseType.withError, err));
+            else resolve(new DataResult(DbResponseType.success, doc));
+          });
+        }else {
+          resolve(new DataResult(DbResponseType.withError, 'Query not found.'))
+        }
+      });
+    },
+    removeAll: (): Promise<DataResult> => {
+      return new Promise((resolve) => {
+        db.history.remove({}, {multi:true}, (err, doc) => {
+          if (err) resolve(new DataResult(DbResponseType.withError, err));
+          else resolve(new DataResult(DbResponseType.success, doc));
+        });
+      });
+    },
   },
 };
