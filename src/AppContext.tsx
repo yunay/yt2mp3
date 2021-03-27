@@ -5,14 +5,16 @@ import { MediaType } from './models/Enums';
 import { HistoryRecord } from './models/HistoryRecord';
 import { YoutubeResult } from './models/YoutubeResult';
 
-export const AppContext = React.createContext<AppData>(null);
+export const AppContext = React.createContext<AppStore>(null);
 
-export class AppData {
+export class AppStore {
+  public historyRecords: HistoryRecord[] = [];
+
+  public mp3mp4ForDownload: { mediaType:MediaType, resultId:string}[] = [];
+
   constructor() {
     makeAutoObservable(this);
   }
-
-  historyRecords: HistoryRecord[] = [];
 
   public addHistoryRecord(newRecord: HistoryRecord) {
     var that = this;

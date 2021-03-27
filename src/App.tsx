@@ -5,23 +5,25 @@ import config from '../config';
 import Layout from './Layout';
 import { ToastContainer } from 'react-toastify';
 import { DbContext } from './data/database';
-import { AppContext, AppData } from './AppContext';
+import { AppContext, AppStore } from './AppContext';
 
 export default function App() {
-  const [appContext, setAppContext] = useState<AppData>(null);
+  const [appContext, setAppContext] = useState<AppStore>(null);
 
   useEffect(() => {
 
     DbContext.history.get().exec((err, doc) => {
+      let mainContext = new AppStore();
+
       if (err) {
         console.error(err);
       } else {
+
         if (doc && doc.length > 0) {
-          let mainContext = new AppData();
           mainContext.historyRecords = doc;
           setAppContext(mainContext);
         } else {
-          setAppContext(null);
+          setAppContext(mainContext);
         }
       }
     });

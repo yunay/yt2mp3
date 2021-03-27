@@ -1,16 +1,16 @@
 import React from 'react';
 import { YoutubeResult } from '../models/YoutubeResult';
-import { AppContext, AppData } from '../AppContext';
+import { AppContext, AppStore } from '../AppContext';
 import { YoutubeDownloadManager } from '../common/DownloadManager';
-import { MediaType } from '../models/Enums';
 import { observer } from 'mobx-react-lite';
+import { MediaType } from '../models/Enums';
 
-interface ResultProps {
+interface VideoResultProps {
   youtubeResult: YoutubeResult;
 }
 
-const Result: React.FC<ResultProps> = observer(({ youtubeResult }) => {
-  const appContext = React.useContext<AppData>(AppContext);
+const VideoResult: React.FC<VideoResultProps> = observer(({ youtubeResult }) => {
+  const appContext = React.useContext<AppStore>(AppContext);
 
   const downloadMp3 = () => {
     YoutubeDownloadManager.downloadMp3(youtubeResult, appContext);
@@ -22,9 +22,9 @@ const Result: React.FC<ResultProps> = observer(({ youtubeResult }) => {
 
   return (
     <div className="card col-3 result" key={youtubeResult.id.videoId}>
-      <div className="existing" title="Изтеглен във формат mp3">
-          {appContext.isAlreadyDownloaded(youtubeResult, MediaType.mp3) ? <span title="Изтеглен във формат mp3">🎵</span> : null}
-          {appContext.isAlreadyDownloaded(youtubeResult, MediaType.mp4)? <span title="Изтеглен във формат mp4">🎬</span> : null}
+      <div className="existing">
+        {appContext.isAlreadyDownloaded(youtubeResult, MediaType.mp3) ? <span title="Изтеглен във формат mp3">🎵</span> : null}
+        {appContext.isAlreadyDownloaded(youtubeResult, MediaType.mp4) ? <span title="Изтеглен във формат mp4">🎬</span> : null}
         </div>
       <iframe
         itemType="text/html"
@@ -47,4 +47,4 @@ const Result: React.FC<ResultProps> = observer(({ youtubeResult }) => {
   );
 });
 
-export default Result;
+export default VideoResult;

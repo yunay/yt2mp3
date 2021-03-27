@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { AppContext, AppData } from '../../AppContext';
+import { AppContext, AppStore } from '../../AppContext';
 import { MediaType } from '../../models/Enums';
 
 const History = observer(() => {
 
-  const appContext = React.useContext<AppData>(AppContext);
+  const appContext = React.useContext<AppStore>(AppContext);
 
   if (appContext.historyRecords == null) {
     return <div>Loading...</div>;

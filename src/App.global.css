@@ -119,7 +119,7 @@ ul.result-buttons>li:hover {
 }
 
 #search-type {
-  width: 300px;
+  width: 220px;
 }
 
 .existing {
@@ -131,4 +131,90 @@ ul.result-buttons>li:hover {
 
 .no-styled-btn{
   cursor: pointer;
+}
+
+.playlist-result{
+  background: white;
+    margin: 10px 20px 0 0;
+    width: 48%;
+    box-shadow: 0px 1px 5px grey;
+    overflow: hidden;
+    border-radius: 2px;
+    position: relative;
+}
+
+.playlist-result-content{
+  display: inline-block;
+  vertical-align: top;
+  padding: 6px 0 0 8px;
+  font-size: 16px;
+  max-width: 450px;
+  overflow: hidden;
+  color: #084298;
+  width: 100%;
+}
+
+.playlist-result-img{
+  cursor: pointer;
+}
+
+.playlist-result-img:hover{
+  opacity: 0.8;
+}
+
+.playlist-results-btn{
+  padding: 6px;
+  right: 0;
+  width: 97.6%;
+  margin: 5px;
+  border: 0;
+  background: white;
+  border: 1px solid rgb(211, 210, 210);
+  text-align: center;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #084298;
+}
+
+.playlist-results-btn:hover{
+  box-shadow: 0px 0px 2px 0px grey;
+}
+
+#results > div.row {
+  margin-left: 0;
+}
+
+.playlist-result-info{
+  width: 92%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.playlist-result-options{
+  display: inline-block;
+  width: 55px;
+  text-align: center;
+  height: 96px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+
+.playlist-result-option{
+  height: 50%;
+  padding: 10px;
+}
+
+.playlist-result-error{
+  background-color: #ff000070;
+}
+
+.playlist-result-marked{
+background-color: #0d6efd78;
+}
+
+.playlist-result-downloaded{
+  background-color: #00e41c8f
 }

@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
+import { SearchType } from '../models/Enums';
 
 interface SearchPanelProps {
-  onSearchCallback: (keyword: string) => void;
+  onSearchCallback: (keyword: string, searchType:SearchType) => void;
 }
 
 const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchCallback }) => {
   const [searchValue, setSearchValue] = useState('');
+  const [searchType, setSearchType] = useState<SearchType>(SearchType.videos)
 
   const handleSearchValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
 
   const handleSearchClick = () => {
-    onSearchCallback(searchValue);
+    onSearchCallback(searchValue, searchType);
   };
+
+  const handleSearchTypeChange = (e:any) => {
+    setSearchType(parseInt(e.target.value));
+  }
 
   const handleKeyPress = (e: any) => {
     if (e.charCode == 13)
@@ -24,9 +30,9 @@ const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchCallback }) => {
     <div id="search">
       <div className="input-group mb-3">
         <div id="search-type">
-          <select className="form-select" id="inputGroupSelect02">
-            <option value="1">Чрез ключова дума</option>
-            <option value="2">Плейлиста</option>
+          <select className="form-select" onChange={handleSearchTypeChange} value={searchType}>
+            <option value="1">Търсене на видеа</option>
+            <option value="2">Търсене на плейлисти</option>
           </select>
         </div>
         <input

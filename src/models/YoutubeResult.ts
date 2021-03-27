@@ -1,6 +1,8 @@
 
 export class YoutubeId {
   public videoId: string;
+
+  public playlistId:string;
 }
 
 export class ThumbnailType {
@@ -23,7 +25,11 @@ export class YoutubeSnippet {
 
   public title: string;
 
-  public thumbnails: Thumbnail
+  public channelTitle: string;
+
+  public thumbnails: Thumbnail;
+
+  public resourceId: YoutubeId;
 }
 
 export class YoutubeResult {

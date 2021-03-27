@@ -6,10 +6,10 @@ import { YoutubeResult } from '../models/YoutubeResult';
 import Helpers from './Helpers';
 import ffmpeg from 'fluent-ffmpeg';
 import jquery from 'jquery';
-import { AppData } from '../AppContext';
+import { AppStore } from '../AppContext';
 
 export const YoutubeDownloadManager = {
-  downloadMp3: (youtubeResult: YoutubeResult, appContext: AppData) => {
+  downloadMp3: (youtubeResult: YoutubeResult, appContext: AppStore) => {
     return remote.dialog
       .showOpenDialog({
         properties: ['openDirectory'],
@@ -54,7 +54,7 @@ export const YoutubeDownloadManager = {
       });
   },
 
-  downloadMp4: (youtubeResult: YoutubeResult, appContext: AppData) => {
+  downloadMp4: (youtubeResult: YoutubeResult, appContext: AppStore) => {
     return remote.dialog
       .showOpenDialog({
         properties: ['openDirectory'],
