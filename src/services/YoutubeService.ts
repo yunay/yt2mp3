@@ -1,5 +1,6 @@
 import axios from 'axios'
 import config from '../../config';
+import { PlaylistResult } from '../models/PlaylistResult';
 
 export class YoutubeService {
 
@@ -17,7 +18,13 @@ export class YoutubeService {
 
     public getPlaylistItems(playlistId: string){
       return axios.get(`https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=1000&playlistId=${playlistId}&key=${config.youtubeKey}`).then(result => {
-          return result.data.items;
+          if(result.data.items && result.data.items.length > 0){
+            var results:PlaylistResult[] = [];
+            result.data.items.forEach(element => results.push(new PlaylistResult(element)));
+            return results;
+          }
+
+          return [];
       })
     }
 

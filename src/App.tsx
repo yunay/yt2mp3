@@ -9,11 +9,11 @@ import { AppContext, AppStore } from './AppContext';
 
 export default function App() {
   const [appContext, setAppContext] = useState<AppStore>(null);
+  const mainContext = new AppStore();
 
   useEffect(() => {
 
     DbContext.history.get().exec((err, doc) => {
-      let mainContext = new AppStore();
 
       if (err) {
         console.error(err);
@@ -21,12 +21,27 @@ export default function App() {
 
         if (doc && doc.length > 0) {
           mainContext.historyRecords = doc;
-          setAppContext(mainContext);
-        } else {
-          setAppContext(mainContext);
         }
+
+        setAppContext(mainContext);
       }
     });
+
+    DbContext.settings.get().exec((err,doc)=>{
+      if (err) {
+        console.error(err);
+      } else {
+
+        if (doc && doc.length > 0) {
+          mainContext.settings = doc[0];
+        } else{
+          mainContext.settings = DbContext.settings.init();
+        }
+
+        setAppContext(mainContext);
+      }
+
+    })
 
     ffmpeg.setFfmpegPath(config.ffmpegPath);
   }, []);

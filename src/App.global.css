@@ -205,6 +205,7 @@ ul.result-buttons>li:hover {
 .playlist-result-option{
   height: 50%;
   padding: 10px;
+  cursor: pointer;
 }
 
 .playlist-result-error{

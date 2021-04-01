@@ -3,6 +3,7 @@ import Menu from './components/Menu';
 import Search from './components/pages/Search';
 import History from './components/pages/History';
 import { MenuItem } from './models/Enums';
+import Settings from './components/pages/Settings';
 
 const Layout = () => {
 
@@ -13,15 +14,11 @@ const Layout = () => {
 
   return (
     <>
-      <Menu
-        selectedMenuItem={selectedMenuItem}
-        onMenuItemSelect={onMenuItemSelect}
-      />
+      <Menu selectedMenuItem={selectedMenuItem} onMenuItemSelect={onMenuItemSelect} />
       <div id="main-container">
         {selectedMenuItem == MenuItem.search ? <Search /> : null}
-        {selectedMenuItem == MenuItem.history ? (
-          <History />
-        ) : null}
+        {selectedMenuItem == MenuItem.history ? <History /> : null}
+        {selectedMenuItem == MenuItem.settings ? <Settings /> : null}
       </div>
     </>
   );

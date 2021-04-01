@@ -1,8 +1,12 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import React from 'react';
-import { DbContext, DbResponseType } from './data/database';
-import { MediaType } from './models/Enums';
+import { YoutubeDownloadManager } from './common/DownloadManager';
+import { DbContext } from './data/database';
+import { AppSettings } from './models/AppSettings';
+import { DbResponseType } from './models/DataResult';
+import { MediaType, PlaylistVideoResultStatus } from './models/Enums';
 import { HistoryRecord } from './models/HistoryRecord';
+import { PlaylistResult } from './models/PlaylistResult';
 import { YoutubeResult } from './models/YoutubeResult';
 
 export const AppContext = React.createContext<AppStore>(null);
@@ -10,11 +14,74 @@ export const AppContext = React.createContext<AppStore>(null);
 export class AppStore {
   public historyRecords: HistoryRecord[] = [];
 
-  public mp3mp4ForDownload: { mediaType:MediaType, resultId:string}[] = [];
+  public playlistVideoResults: PlaylistResult[] = [];
+
+  public settings: AppSettings;
 
   constructor() {
     makeAutoObservable(this);
+
+    this.downloadAllMarkedPlaylistResults = this.downloadAllMarkedPlaylistResults.bind(this);
   }
+
+  //#region playlistVideoResults
+
+  public markUnmarkAll(mediaType:MediaType){
+
+    let statusMp3: PlaylistVideoResultStatus = this.playlistVideoResults.findIndex(x=>x.playlistVideoResultStatusMp3 != PlaylistVideoResultStatus.marked) != -1
+    ? PlaylistVideoResultStatus.marked
+    : PlaylistVideoResultStatus.notMarked;
+
+    let statusMp4: PlaylistVideoResultStatus = this.playlistVideoResults.findIndex(x=>x.playlistVideoResultStatusMp4 != PlaylistVideoResultStatus.marked) != -1
+    ? PlaylistVideoResultStatus.marked
+    : PlaylistVideoResultStatus.notMarked;
+
+    for(var i = 0; i < this.playlistVideoResults.length;i++){
+      if(mediaType == MediaType.mp3){
+        this.playlistVideoResults[i].playlistVideoResultStatusMp3 = statusMp3;
+      }else if(mediaType == MediaType.mp4){
+        this.playlistVideoResults[i].playlistVideoResultStatusMp4 = statusMp4;
+      }
+    }
+  }
+
+  public changeStatus(id:string, mediaType:MediaType, status:PlaylistVideoResultStatus){
+    let index = this.playlistVideoResults.findIndex(x=>x.videoId == id);
+    if(index != -1){
+      if(mediaType == MediaType.mp3){
+        this.playlistVideoResults[index].playlistVideoResultStatusMp3 = status;
+      }else if(mediaType == MediaType.mp4){
+        this.playlistVideoResults[index].playlistVideoResultStatusMp4 = status;
+      }
+    }
+  }
+
+  public downloadAllMarkedPlaylistResults(){
+    this.playlistVideoResults.forEach(playlistVideoResult => {
+
+      if(playlistVideoResult.playlistVideoResultStatusMp3 == PlaylistVideoResultStatus.marked){
+        YoutubeDownloadManager.downloadMp3(playlistVideoResult.youtubeResult.snippet.resourceId.videoId,playlistVideoResult.youtubeResult.snippet.title, this.settings.downloadPath).then(result => {
+          playlistVideoResult.playlistVideoResultStatusMp3 = result.reponseType == DbResponseType.success ? PlaylistVideoResultStatus.downloaded : PlaylistVideoResultStatus.error;
+
+          if(result.reponseType == DbResponseType.success)
+            this.addHistoryRecord(new HistoryRecord(playlistVideoResult.youtubeResult, MediaType.mp3, new Date(), playlistVideoResult.youtubeResult.snippet.resourceId.videoId));
+        })
+      }
+
+      if(playlistVideoResult.playlistVideoResultStatusMp4 == PlaylistVideoResultStatus.marked){
+        YoutubeDownloadManager.downloadMp4(playlistVideoResult.youtubeResult.snippet.resourceId.videoId,playlistVideoResult.youtubeResult.snippet.title, this.settings.downloadPath).then(result => {
+          playlistVideoResult.playlistVideoResultStatusMp4 = result.reponseType == DbResponseType.success ? PlaylistVideoResultStatus.downloaded : PlaylistVideoResultStatus.error;
+
+          if(result.reponseType == DbResponseType.success)
+            this.addHistoryRecord(new HistoryRecord(playlistVideoResult.youtubeResult, MediaType.mp4, new Date(), playlistVideoResult.youtubeResult.snippet.resourceId.videoId));
+        })
+      }
+    })
+  }
+
+  //#endregion
+
+  //#region historyRecords
 
   public addHistoryRecord(newRecord: HistoryRecord) {
     var that = this;
@@ -47,15 +114,31 @@ export class AppStore {
     });
   }
 
-  public isAlreadyDownloaded(result: YoutubeResult, mediaType: MediaType) {
+  //#endregion
+
+  //#region AppSettings
+
+  public updateSettings(newSettings:AppSettings){
+    DbContext.settings.update(newSettings).then((result)=>{
+      if(result.reponseType = DbResponseType.success){
+        runInAction(()=>{
+          this.settings.downloadPath = result.data.downloadPath;
+          this.settings.lastUpdatedOn = result.data.lastUpdatedOn;
+        })
+      }else if(result.reponseType = DbResponseType.withError){
+        console.log(result.error)
+      }
+    })
+  }
+
+  //#endregion
+
+  public isAlreadyDownloaded(videoId, mediaType: MediaType) {
     if (this.historyRecords && this.historyRecords.length > 0) {
       var isFound = false;
 
       this.historyRecords.forEach((x) => {
-        if (
-          x.resultId == result.id.videoId &&
-          x.downloadContentType == mediaType
-        )
+        if (x.resultId == videoId && x.downloadContentType == mediaType)
           isFound = true;
       });
 

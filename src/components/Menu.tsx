@@ -31,6 +31,17 @@ const Menu: React.FC<MenuProps> = ({ selectedMenuItem, onMenuItemSelect }) => {
           📝
         </button>
       </li>
+      <li className="nav-item">
+        <button
+          onClick={() => onMenuItemSelect(MenuItem.settings)}
+          className={`btn btn-link nav-link menu-nav-item ${
+            selectedMenuItem == MenuItem.settings ? 'active-nav-link' : ''
+          }`}
+          title="Настройки"
+        >
+          ⚙
+        </button>
+      </li>
     </ul>
   );
 };

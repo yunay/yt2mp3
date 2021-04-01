@@ -5,7 +5,8 @@ export enum MediaType{
 
 export enum MenuItem {
   search = 1,
-  history = 2
+  history = 2,
+  settings = 3
 }
 
 export enum SearchType{

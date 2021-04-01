@@ -4,6 +4,8 @@ import { AppContext, AppStore } from '../AppContext';
 import { YoutubeDownloadManager } from '../common/DownloadManager';
 import { observer } from 'mobx-react-lite';
 import { MediaType } from '../models/Enums';
+import { HistoryRecord } from '../models/HistoryRecord';
+import { DbResponseType } from '../models/DataResult';
 
 interface VideoResultProps {
   youtubeResult: YoutubeResult;
@@ -13,18 +15,26 @@ const VideoResult: React.FC<VideoResultProps> = observer(({ youtubeResult }) => 
   const appContext = React.useContext<AppStore>(AppContext);
 
   const downloadMp3 = () => {
-    YoutubeDownloadManager.downloadMp3(youtubeResult, appContext);
+    YoutubeDownloadManager.downloadMp3(youtubeResult.id.videoId,youtubeResult.snippet.title, appContext.settings.downloadPath, true).then((result)=>{
+
+      if(result.reponseType == DbResponseType.success)
+        appContext.addHistoryRecord(new HistoryRecord(youtubeResult, MediaType.mp3, new Date(), youtubeResult.id.videoId));
+    });
   };
 
   const downloadMp4 = () => {
-    YoutubeDownloadManager.downloadMp4(youtubeResult, appContext)
+    YoutubeDownloadManager.downloadMp4(youtubeResult.id.videoId,youtubeResult.snippet.title, appContext.settings.downloadPath, true).then((result)=>{
+
+      if(result.reponseType == DbResponseType.success)
+        appContext.addHistoryRecord(new HistoryRecord(youtubeResult, MediaType.mp4, new Date(), youtubeResult.id.videoId));
+    })
   };
 
   return (
     <div className="card col-3 result" key={youtubeResult.id.videoId}>
       <div className="existing">
-        {appContext.isAlreadyDownloaded(youtubeResult, MediaType.mp3) ? <span title="Изтеглен във формат mp3">🎵</span> : null}
-        {appContext.isAlreadyDownloaded(youtubeResult, MediaType.mp4) ? <span title="Изтеглен във формат mp4">🎬</span> : null}
+        {appContext.isAlreadyDownloaded(youtubeResult.id.videoId, MediaType.mp3) ? <span title="Изтеглен във формат mp3">🎵</span> : null}
+        {appContext.isAlreadyDownloaded(youtubeResult.id.videoId, MediaType.mp4) ? <span title="Изтеглен във формат mp4">🎬</span> : null}
         </div>
       <iframe
         itemType="text/html"

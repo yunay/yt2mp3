@@ -4,17 +4,19 @@ import { remote } from 'electron';
 import PlaylistResult from './PlaylistResult';
 import { YoutubeService } from '../services/YoutubeService';
 import PlaylistVideoResult from './PlaylistVideoResult';
+import { AppContext, AppStore } from '../AppContext';
+import { observer } from 'mobx-react-lite';
+import { MediaType, PlaylistVideoResultStatus } from '../models/Enums';
+import { runInAction } from 'mobx';
 
 interface PlaylistResultsProps {
   results: YoutubeResult[];
 }
 
-const PlaylistResults: React.FC<PlaylistResultsProps> = (props) => {
-  const [windowHeight, setWindowHeight] = useState(
-    remote.getCurrentWindow().getBounds().height
-  );
+const PlaylistResults: React.FC<PlaylistResultsProps> = observer((props) => {
+  const appContext = React.useContext<AppStore>(AppContext);
+  const [windowHeight, setWindowHeight] = useState(remote.getCurrentWindow().getBounds().height);
   const [playlistId, setPlaylistId] = useState(null);
-  const [playlistVideoResults, setPlaylistVideoResults] = useState(null);
   const youtubeService = new YoutubeService();
 
   useEffect(() => {
@@ -27,7 +29,19 @@ const PlaylistResults: React.FC<PlaylistResultsProps> = (props) => {
   useEffect(() => {
     if (playlistId) {
       youtubeService.getPlaylistItems(playlistId).then((results) => {
-        setPlaylistVideoResults(results);
+        runInAction(()=>{
+          results.forEach(result => {
+            if(appContext.isAlreadyDownloaded(result.youtubeResult.snippet.resourceId.videoId, MediaType.mp3)){
+              result.playlistVideoResultStatusMp3 = PlaylistVideoResultStatus.downloaded;
+            }
+
+            if(appContext.isAlreadyDownloaded(result.youtubeResult.snippet.resourceId.videoId, MediaType.mp4)){
+              result.playlistVideoResultStatusMp4 = PlaylistVideoResultStatus.downloaded;
+            }
+          })
+        })
+
+        appContext.playlistVideoResults = results;
       });
     }
   }, [playlistId]);
@@ -40,22 +54,29 @@ const PlaylistResults: React.FC<PlaylistResultsProps> = (props) => {
     setPlaylistId(null);
   };
 
+  const toggleMarkAllPlaylistResylts = (mediaType:MediaType)=>{
+    if(appContext.playlistVideoResults && appContext.playlistVideoResults.length > 0){
+
+      appContext.markUnmarkAll(mediaType)
+    }
+  }
+
   return (
     <div id="results" style={{ height: windowHeight / 1.32 }}>
       {playlistId && (
         <div className="row" style={{width:"98%"}}>
           <div className="col-3">
-            <button className="playlist-results-btn" onClick={handleBackBtnClick}>
-              Маркирай всички Mp3
+            <button className="playlist-results-btn" onClick={()=>toggleMarkAllPlaylistResylts(MediaType.mp3)}>
+              { appContext.playlistVideoResults.findIndex(x=>x.playlistVideoResultStatusMp3 != PlaylistVideoResultStatus.marked) != -1 ? "Маркирай всички Mp3" : "Отмаркирай всички Mp3"}
             </button>
           </div>
           <div className="col-3">
-            <button className="playlist-results-btn" onClick={handleBackBtnClick}>
-              Маркирай всички Mp4
+            <button className="playlist-results-btn" onClick={()=>toggleMarkAllPlaylistResylts(MediaType.mp4)}>
+            { appContext.playlistVideoResults.findIndex(x=>x.playlistVideoResultStatusMp4 != PlaylistVideoResultStatus.marked) != -1 ? "Маркирай всички Mp4" : "Отмаркирай всички Mp4"}
             </button>
           </div>
           <div className="col-3">
-            <button className="playlist-results-btn" onClick={handleBackBtnClick}>
+            <button className="playlist-results-btn" onClick={appContext.downloadAllMarkedPlaylistResults}>
               Изтегли всички маркирани
             </button>
           </div>
@@ -78,16 +99,16 @@ const PlaylistResults: React.FC<PlaylistResultsProps> = (props) => {
             />
           ))}
         {playlistId &&
-          playlistVideoResults &&
-          playlistVideoResults.map((result) => (
+          appContext.playlistVideoResults &&
+          appContext.playlistVideoResults.map((result) => (
             <PlaylistVideoResult
-              key={result.snippet.resourceId.videoId}
-              youtubeResult={result}
+              key={result.youtubeResult.snippet.resourceId.videoId}
+              playlistResult={result}
             />
           ))}
       </div>
     </div>
   );
-};
+});
 
 export default PlaylistResults;

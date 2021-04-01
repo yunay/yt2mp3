@@ -5,9 +5,10 @@ export class HistoryRecord {
   constructor(
     _youtubeResult: YoutubeResult,
     _downloadContentType: MediaType,
-    _downloadedOn: Date
+    _downloadedOn: Date,
+    _resultId:string
   ) {
-    this.resultId = _youtubeResult.id.videoId;
+    this.resultId = _resultId;
     this.youtubeResult = _youtubeResult;
     this.downloadContentType = _downloadContentType;
     this.downloadedOn = _downloadedOn;
