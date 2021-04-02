@@ -22,12 +22,12 @@ export const YoutubeDownloadManager = {
           resolve(new DataResult(DbResponseType.success));
         })
         .on('error', (err) => {
-          jQuery('#loading-screen').fadeOut();
+          console.log(err)
+          jquery('#loading-screen').fadeOut();
 
           if(notify)
             Helpers.notify(`😕 Възникна грешка при свалянето на ${videoTitle}.mp3`, 'error');
 
-          console.error(err);
 
           resolve(new DataResult(DbResponseType.withError));
         })

@@ -14,6 +14,7 @@ const Helpers = {
         },
 
         escapeInvalidSymbolsInFilename: (filename:string) => {
+          filename = filename.replaceAll('"','');
           return filename.replace(/[<>\/\\\\?.:|\s_]+/g, '_')
         }
     },

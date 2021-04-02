@@ -62,8 +62,9 @@ const PlaylistResults: React.FC<PlaylistResultsProps> = observer((props) => {
   }
 
   return (
-    <div id="results" style={{ height: windowHeight / 1.32 }}>
-      {playlistId && (
+    <>
+    <div>
+    {playlistId && (
         <div className="row" style={{width:"98%"}}>
           <div className="col-3">
             <button className="playlist-results-btn" onClick={()=>toggleMarkAllPlaylistResylts(MediaType.mp3)}>
@@ -87,7 +88,8 @@ const PlaylistResults: React.FC<PlaylistResultsProps> = observer((props) => {
           </div>
         </div>
       )}
-
+    </div>
+    <div id="results" style={{ height: windowHeight / 1.42 }}>
       <div className="row">
         {!playlistId &&
           props.results &&
@@ -108,6 +110,7 @@ const PlaylistResults: React.FC<PlaylistResultsProps> = observer((props) => {
           ))}
       </div>
     </div>
+    </>
   );
 });
 

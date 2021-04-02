@@ -12,14 +12,16 @@ const Search = () => {
 
   const onSearchCallback = (keyword: string, searchType:SearchType) => {
 
-    if(searchType == SearchType.videos){
-      youtubeService.getVideosByText(keyword).then((results) => {
-        setState({results, searchType})
-      });
-    }else if(searchType == SearchType.playlists){
-      youtubeService.getPlaylistsByText(keyword).then((results) => {
-        setState({results, searchType})
-      });
+    if(keyword){
+      if(searchType == SearchType.videos){
+        youtubeService.getVideosByText(keyword).then((results) => {
+          setState({results, searchType})
+        });
+      }else if(searchType == SearchType.playlists){
+        youtubeService.getPlaylistsByText(keyword).then((results) => {
+          setState({results, searchType})
+        });
+      }
     }
   };
 

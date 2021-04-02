@@ -1,3 +1,5 @@
+import { remote } from 'electron';
+import jquery from 'jquery';
 import { makeAutoObservable, runInAction } from 'mobx';
 import React from 'react';
 import { YoutubeDownloadManager } from './common/DownloadManager';
@@ -7,7 +9,6 @@ import { DbResponseType } from './models/DataResult';
 import { MediaType, PlaylistVideoResultStatus } from './models/Enums';
 import { HistoryRecord } from './models/HistoryRecord';
 import { PlaylistResult } from './models/PlaylistResult';
-import { YoutubeResult } from './models/YoutubeResult';
 
 export const AppContext = React.createContext<AppStore>(null);
 
@@ -56,27 +57,38 @@ export class AppStore {
     }
   }
 
-  public downloadAllMarkedPlaylistResults(){
-    this.playlistVideoResults.forEach(playlistVideoResult => {
+  public async downloadAllMarkedPlaylistResults(){
 
-      if(playlistVideoResult.playlistVideoResultStatusMp3 == PlaylistVideoResultStatus.marked){
-        YoutubeDownloadManager.downloadMp3(playlistVideoResult.youtubeResult.snippet.resourceId.videoId,playlistVideoResult.youtubeResult.snippet.title, this.settings.downloadPath).then(result => {
-          playlistVideoResult.playlistVideoResultStatusMp3 = result.reponseType == DbResponseType.success ? PlaylistVideoResultStatus.downloaded : PlaylistVideoResultStatus.error;
+      jquery('#loading-screen').fadeIn();
 
-          if(result.reponseType == DbResponseType.success)
-            this.addHistoryRecord(new HistoryRecord(playlistVideoResult.youtubeResult, MediaType.mp3, new Date(), playlistVideoResult.youtubeResult.snippet.resourceId.videoId));
-        })
-      }
+      await Promise.all(this.playlistVideoResults.map(async (playlistVideoResult) => {
+        if(playlistVideoResult.playlistVideoResultStatusMp3 == PlaylistVideoResultStatus.marked){
+          await YoutubeDownloadManager.downloadMp3(playlistVideoResult.youtubeResult.snippet.resourceId.videoId,playlistVideoResult.youtubeResult.snippet.title, this.settings.downloadPath).then(result => {
 
-      if(playlistVideoResult.playlistVideoResultStatusMp4 == PlaylistVideoResultStatus.marked){
-        YoutubeDownloadManager.downloadMp4(playlistVideoResult.youtubeResult.snippet.resourceId.videoId,playlistVideoResult.youtubeResult.snippet.title, this.settings.downloadPath).then(result => {
-          playlistVideoResult.playlistVideoResultStatusMp4 = result.reponseType == DbResponseType.success ? PlaylistVideoResultStatus.downloaded : PlaylistVideoResultStatus.error;
+            runInAction(()=>{
+              playlistVideoResult.playlistVideoResultStatusMp3 = result.reponseType == DbResponseType.success ? PlaylistVideoResultStatus.downloaded : PlaylistVideoResultStatus.error;
 
-          if(result.reponseType == DbResponseType.success)
-            this.addHistoryRecord(new HistoryRecord(playlistVideoResult.youtubeResult, MediaType.mp4, new Date(), playlistVideoResult.youtubeResult.snippet.resourceId.videoId));
-        })
-      }
-    })
+              if(result.reponseType == DbResponseType.success)
+                this.addHistoryRecord(new HistoryRecord(playlistVideoResult.youtubeResult, MediaType.mp3, new Date(), playlistVideoResult.youtubeResult.snippet.resourceId.videoId));
+            })
+
+          })
+        }
+
+        if(playlistVideoResult.playlistVideoResultStatusMp4 == PlaylistVideoResultStatus.marked){
+          await YoutubeDownloadManager.downloadMp4(playlistVideoResult.youtubeResult.snippet.resourceId.videoId,playlistVideoResult.youtubeResult.snippet.title, this.settings.downloadPath).then(result => {
+
+            runInAction(()=>{
+              playlistVideoResult.playlistVideoResultStatusMp4 = result.reponseType == DbResponseType.success ? PlaylistVideoResultStatus.downloaded : PlaylistVideoResultStatus.error;
+
+              if(result.reponseType == DbResponseType.success)
+                this.addHistoryRecord(new HistoryRecord(playlistVideoResult.youtubeResult, MediaType.mp4, new Date(), playlistVideoResult.youtubeResult.snippet.resourceId.videoId));
+            })
+          })
+        }
+      })).finally(()=>{
+        jquery('#loading-screen').fadeOut();
+      })
   }
 
   //#endregion

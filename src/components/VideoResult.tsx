@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { MediaType } from '../models/Enums';
 import { HistoryRecord } from '../models/HistoryRecord';
 import { DbResponseType } from '../models/DataResult';
+import jquery from 'jquery';
 
 interface VideoResultProps {
   youtubeResult: YoutubeResult;
@@ -15,7 +16,10 @@ const VideoResult: React.FC<VideoResultProps> = observer(({ youtubeResult }) => 
   const appContext = React.useContext<AppStore>(AppContext);
 
   const downloadMp3 = () => {
+    jquery('#loading-screen').fadeIn();
     YoutubeDownloadManager.downloadMp3(youtubeResult.id.videoId,youtubeResult.snippet.title, appContext.settings.downloadPath, true).then((result)=>{
+
+      jquery('#loading-screen').fadeOut();
 
       if(result.reponseType == DbResponseType.success)
         appContext.addHistoryRecord(new HistoryRecord(youtubeResult, MediaType.mp3, new Date(), youtubeResult.id.videoId));
@@ -23,7 +27,10 @@ const VideoResult: React.FC<VideoResultProps> = observer(({ youtubeResult }) => 
   };
 
   const downloadMp4 = () => {
+    jquery('#loading-screen').fadeIn();
+
     YoutubeDownloadManager.downloadMp4(youtubeResult.id.videoId,youtubeResult.snippet.title, appContext.settings.downloadPath, true).then((result)=>{
+      jquery('#loading-screen').fadeOut();
 
       if(result.reponseType == DbResponseType.success)
         appContext.addHistoryRecord(new HistoryRecord(youtubeResult, MediaType.mp4, new Date(), youtubeResult.id.videoId));
