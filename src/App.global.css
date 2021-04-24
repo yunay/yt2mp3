@@ -154,8 +154,8 @@ ul.result-buttons>li:hover {
 
 .playlist-result{
   background: white;
-    margin: 10px 20px 0 0;
-    width: 48%;
+    margin: 10px 20px 0 0 !important;
+    width: 48% !important;
     box-shadow: 0px 1px 5px grey;
     overflow: hidden;
     border-radius: 2px;
@@ -201,7 +201,7 @@ ul.result-buttons>li:hover {
 }
 
 #results > div.row {
-  margin-left: 0;
+  margin-left: 0 !important;
 }
 
 .playlist-result-info{

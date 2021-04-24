@@ -7,7 +7,7 @@ import webpack from 'webpack';
 import { dependencies as externals } from '../../src/package.json';
 
 export default {
-  externals: [...Object.keys(externals || {}), {"nedb": 'commonjs nedb'}],
+  externals: process.env.NODE_ENV === 'production' ?  [...Object.keys(externals || {})] : [...Object.keys(externals || {}), {"nedb": 'commonjs nedb'}],
 
   module: {
     rules: [
