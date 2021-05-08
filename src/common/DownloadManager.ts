@@ -6,7 +6,7 @@ import { DataResult, DbResponseType } from '../models/DataResult';
 
 export const YoutubeDownloadManager = {
   downloadMp3: (videoId:string, videoTitle:string, downloadPath: string, notify?:boolean) => {
-    let stream = ytdl(videoId, { quality: 'highestaudio' });
+    let stream = ytdl(videoId, { quality: 'highestaudio'});
 
     return new Promise<DataResult<any>>((resolve) => {
       ffmpeg(stream)
@@ -31,6 +31,7 @@ export const YoutubeDownloadManager = {
 
           resolve(new DataResult(DbResponseType.withError));
         })
+        .audioBitrate(320)
         .save(`${downloadPath}\\${Helpers.text.escapeInvalidSymbolsInFilename(videoTitle)}.mp3`);
     });
   },

@@ -11,7 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
 let mainWindow: BrowserWindow | null = null;
@@ -67,34 +67,6 @@ const createWindow = async () => {
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  if(process.env.NODE_ENV !== 'development'){
-    console.log('in')
-    setInterval(() => {
-      autoUpdater.checkForUpdates().then(x=>{
-        console.log(x)
-      }).catch(err => console.error(err))
-    }, 60000)
-
-    autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-      const dialogOpts = {
-        type: 'info',
-        buttons: ['Restart', 'Later'],
-        title: 'Application Update',
-        message: process.platform === 'win32' ? releaseNotes : releaseName,
-        detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-      }
-
-      dialog.showMessageBox(dialogOpts).then((returnValue) => {
-        if (returnValue.response === 0) autoUpdater.quitAndInstall()
-      })
-    })
-
-    autoUpdater.on('error', message => {
-      console.error('There was a problem updating the application')
-      console.error(message)
-    })
-  }
-
   mainWindow.webContents.openDevTools();
 
   mainWindow.removeMenu();
@@ -144,6 +116,18 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
-ipcMain.on('app_version', (event) => {
+ipcMain.on('app_version', (event: any) => {
   event.sender.send('app_version', { version: app.getVersion() });
+});
+
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update_available');
+});
+
+autoUpdater.on('update-downloaded', () => {
+  mainWindow.webContents.send('update_downloaded');
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
 });

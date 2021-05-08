@@ -42,12 +42,9 @@
   <div id="root"></div>
   <div id="notification" class="hidden">
     <p id="message"></p>
-    <button class="btn btn-primary" id="close-button" onClick="closeNotification()">
-      Затвори
-    </button>
-    <button class="btn btn-success hidden" id="restart-button" onClick="restartApp()">
+    <button id="restart-button" class="btn btn-primary hidden" onClick="restartApp()">
       Рестартирай
-    </button>
+  </button>
   </div>
   <script>
     const scripts = [];
@@ -76,34 +73,28 @@
     const version = document.getElementById('version');
 
     ipcRenderer.send('app_version');
+
     ipcRenderer.on('app_version', (event, arg) => {
       ipcRenderer.removeAllListeners('app_version');
-
-      document.title = 'Youtube2Mp3 ' + arg.version;
     });
-
-    const notification = document.getElementById('notification');
-    const message = document.getElementById('message');
-    const restartButton = document.getElementById('restart-button');
 
     ipcRenderer.on('update_available', () => {
       ipcRenderer.removeAllListeners('update_available');
-      message.innerText = 'Има нова версия. Изтегля се...';
-      notification.classList.remove('hidden');
-    });
-    ipcRenderer.on('update_downloaded', () => {
-      ipcRenderer.removeAllListeners('update_downloaded');
-      message.innerText = 'Новата версия е изтеглена. Ще бъде инсталирана след рестарт. Рестартирай сега?';
-      restartButton.classList.remove('hidden');
-      notification.classList.remove('hidden');
+      document.getElementById('message').innerText = 'Има нова версия на програмата. Изтегля се...';
+      document.getElementById('notification').classList.remove('hidden');
     });
 
-    function closeNotification() {
-      notification.classList.add('hidden');
-    }
+    ipcRenderer.on('update_downloaded', () => {
+      ipcRenderer.removeAllListeners('update_downloaded');
+      document.getElementById('message').innerText = 'Рестартирай за да обновиш програмата.';
+      document.getElementById('restart-button').classList.remove('hidden');
+      document.getElementById('notification').classList.remove('hidden');
+    });
+
     function restartApp() {
       ipcRenderer.send('restart_app');
     }
+
   </script>
 </body>
 
