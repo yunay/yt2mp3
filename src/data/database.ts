@@ -57,7 +57,7 @@ export const DbContext = {
   settings:{
     init: (): AppSettings => {
 
-      let appSettings = new AppSettings('C:\\Desktop');
+      let appSettings = new AppSettings('C:\\');
 
       db.settings.insert(appSettings, (err, doc) => {
         if (err) {
