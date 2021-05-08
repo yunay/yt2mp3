@@ -1,7 +1,7 @@
 {
   "name": "yt2mp3-win64",
   "productName": "yt2mp3-win64",
-  "version": "2.0.1",
+  "version": "2.0.6",
   "description": "Youtube content to mp3 and mp4 formats",
   "main": "./main.prod.js",
   "author": {
