@@ -11,7 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
 let mainWindow: BrowserWindow | null = null;
@@ -120,14 +120,26 @@ ipcMain.on('app_version', (event: any) => {
   event.sender.send('app_version', { version: app.getVersion() });
 });
 
-autoUpdater.on('update-available', () => {
-  mainWindow.webContents.send('update_available');
-});
 
-autoUpdater.on('update-downloaded', () => {
-  mainWindow.webContents.send('update_downloaded');
-});
+setInterval(() => {
+  autoUpdater.checkForUpdates();
+}, 60000)
 
-ipcMain.on('restart_app', () => {
-  autoUpdater.quitAndInstall();
-});
+autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Рестарт', 'По-късно'],
+    title: 'Нова версия на приложението.',
+    message: process.platform === 'win32' ? releaseNotes : releaseName,
+    detail: 'Има налична нова версия. Рестартирайте приложението, за да бъде приложена промяната'
+  }
+
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) autoUpdater.quitAndInstall()
+  })
+})
+
+autoUpdater.on('error', message => {
+  console.error('Възникна грешка при обновяване на приложнието.')
+  console.error(message)
+})

@@ -4,24 +4,6 @@
 <head>
   <meta charset="utf-8" />
   <title>Youtube2Mp3</title>
-  <style>
-    #notification {
-      position: fixed;
-      bottom: 50%;
-      left: 32%;
-      font-size: 18px;
-      width: 500px;
-      padding: 30px 40px;
-      color: #4e73df;
-      border-radius: 5px;
-      background-color: white;
-      box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
   <script>
     (() => {
       if (process?.env?.NODE_ENV !== 'development') {
@@ -40,12 +22,6 @@
 
 <body>
   <div id="root"></div>
-  <div id="notification" class="hidden">
-    <p id="message"></p>
-    <button id="restart-button" class="btn btn-primary hidden" onClick="restartApp()">
-      Рестартирай
-  </button>
-  </div>
   <script>
     const scripts = [];
 
@@ -70,30 +46,13 @@
     }
 
     const { ipcRenderer } = require('electron');
-    const version = document.getElementById('version');
 
     ipcRenderer.send('app_version');
 
     ipcRenderer.on('app_version', (event, arg) => {
       ipcRenderer.removeAllListeners('app_version');
+      document.title = 'Youtube2Mp3 ' + arg.version;
     });
-
-    ipcRenderer.on('update_available', () => {
-      ipcRenderer.removeAllListeners('update_available');
-      document.getElementById('message').innerText = 'Има нова версия на програмата. Изтегля се...';
-      document.getElementById('notification').classList.remove('hidden');
-    });
-
-    ipcRenderer.on('update_downloaded', () => {
-      ipcRenderer.removeAllListeners('update_downloaded');
-      document.getElementById('message').innerText = 'Рестартирай за да обновиш програмата.';
-      document.getElementById('restart-button').classList.remove('hidden');
-      document.getElementById('notification').classList.remove('hidden');
-    });
-
-    function restartApp() {
-      ipcRenderer.send('restart_app');
-    }
 
   </script>
 </body>
