@@ -3,6 +3,7 @@ import DataStore from 'nedb';
 import { AppSettings } from '../models/AppSettings';
 import { DataResult, DbResponseType } from '../models/DataResult';
 import { HistoryRecord } from '../models/HistoryRecord';
+import {existsSync, mkdirSync} from 'fs-extra'
 
 const electronUserDataPath = (app || remote.app).getPath('userData');
 
@@ -57,7 +58,11 @@ export const DbContext = {
   settings:{
     init: (): AppSettings => {
 
-      let appSettings = new AppSettings('C:\\');
+      let downloadDir = 'C:\\yt2mp3-downloads';
+      let appSettings = new AppSettings(downloadDir);
+
+      if (!existsSync(downloadDir))
+        mkdirSync(downloadDir);
 
       db.settings.insert(appSettings, (err, doc) => {
         if (err) {

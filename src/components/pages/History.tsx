@@ -6,7 +6,9 @@ import { MediaType } from '../../models/Enums';
 
 const History = observer(() => {
   const appContext = React.useContext<AppStore>(AppContext);
-  const [windowHeight, setWindowHeight] = useState(remote.getCurrentWindow().getBounds().height);
+  const [windowHeight, setWindowHeight] = useState(
+    remote.getCurrentWindow().getBounds().height
+  );
 
   useEffect(() => {
     addEventListener('resize', onWidnowRezise);
@@ -30,51 +32,53 @@ const History = observer(() => {
     );
   } else {
     return (
-        <div id="history-results">
-          <div className="table-head">
-            <div className="row">
-              <div className="col-1">№</div>
-              <div className="col-7">Наименование</div>
-              <div className="col-1">Формат</div>
-              <div className="col-2">Дата на изтегляне</div>
-              <div className="col-1">
-                <span
-                  onClick={() => appContext.clearAllHistory()}
-                  className="no-styled-btn"
-                >
-                  🗑
-                </span>
-              </div>
+      <div id="history-results">
+        <div className="table-head">
+          <div className="row">
+            <div className="col-1">№</div>
+            <div className="col-7">Наименование</div>
+            <div className="col-1">Формат</div>
+            <div className="col-2">Дата на изтегляне</div>
+            <div className="col-1">
+              <span
+                title="Изтрий всички записи от историята"
+                onClick={() => appContext.clearAllHistory()}
+                className="no-styled-btn"
+              >
+                🗑
+              </span>
             </div>
           </div>
-          <div className="table-body" style={{ height: windowHeight / 1.3 }}>
-            {appContext.historyRecords.map((record, index) => {
-              return (
-                <div className="row" key={record.youtubeResult.id.videoId}>
-                  <div className="col-1">{index + 1}</div>
-                  <div className="col-7">
-                    {record.youtubeResult.snippet.title}
-                  </div>
-                  <div className="col-1">
-                    {record.downloadContentType == MediaType.mp3 ? '🎵' : '🎬'}
-                  </div>
-                  <div className="col-2">
-                    {record.downloadedOn.toLocaleString()}
-                  </div>
-                  <div className="col-1">
-                    <span
-                      className="no-styled-btn"
-                      onClick={() => appContext.removeHistoryRecord(record)}
-                    >
-                      {' '}
-                      ➖{' '}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </div>
+        <div className="table-body" style={{ height: windowHeight / 1.3 }}>
+          {appContext.historyRecords.map((record, index) => {
+            return (
+              <div className="row" key={record.youtubeResult.id.videoId}>
+                <div className="col-1">{index + 1}</div>
+                <div className="col-7">
+                  {record.youtubeResult.snippet.title}
+                </div>
+                <div className="col-1">
+                  {record.downloadContentType == MediaType.mp3 ? '🎵' : '🎬'}
+                </div>
+                <div className="col-2">
+                  {record.downloadedOn.toLocaleString()}
+                </div>
+                <div className="col-1">
+                  <span
+                    title="Изтрий записа от исторята"
+                    className="no-styled-btn"
+                    onClick={() => appContext.removeHistoryRecord(record)}
+                  >
+                    {' '}
+                    ❌{' '}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     );
   }
 });
