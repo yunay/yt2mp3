@@ -1,7 +1,7 @@
 {
   "name": "yt2mp3-win64",
   "productName": "Youtube2mp3-win64",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Fast Refresh for rapid application development",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
@@ -195,7 +195,7 @@
     "source-map-support": "^0.5.19",
     "update-electron-app": "^2.0.1",
     "ytdl": "^1.4.1",
-    "ytdl-core": "^4.5.0"
+    "ytdl-core": "^4.8.3"
   },
   "devEngines": {
     "node": ">=10.x",
